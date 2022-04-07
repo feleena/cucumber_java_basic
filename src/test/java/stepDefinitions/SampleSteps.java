@@ -1,5 +1,7 @@
 package stepDefinitions;
 
+import cucumber.api.DataTable;
+import cucumber.api.PendingException;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -7,7 +9,6 @@ import cucumber.api.java.en.When;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 import java.util.List;
 import java.util.Map;
@@ -120,40 +121,45 @@ public class SampleSteps {
         assertTrue(driver.findElement(By.name("randomButton1")).isEnabled());
         assertTrue(driver.findElement(By.name("randomButton2")).isEnabled());
     }
+
     @Then("^I see error: ([^\"]*)$")
-    public  void iSeeAgeError(String anything) throws Throwable {
+    public void iSeeAgeError(String anything) throws Throwable {
         assertEquals(anything, driver.findElement(By.id("error")).getText());
     }
+
     @Then("I am not navigated to age message page")
-    public void iAmNotInAgeMessagePage()throws Throwable {
+    public void iAmNotInAgeMessagePage() throws Throwable {
         assertFalse(driver.getCurrentUrl().contains("https://kristinek.github.io/site/examples/age_2.html"));
     }
 
 
-
     @Given("I am on Feedback page")
-    public void iAmOnFeedbackPage() throws Throwable{
+    public void iAmOnFeedbackPage() throws Throwable {
         driver.get("https://kristinek.github.io/site/tasks/provide_feedback");
     }
 
     @And("I enter age in feedback: \"([^\"]*)\"$")
-    public void iEnterAgeInFeedback(String age) throws Throwable{
+    public void iEnterAgeInFeedback(String age) throws Throwable {
         driver.findElement(By.id("fb_age")).clear();
         driver.findElement(By.id("fb_age")).sendKeys(age);
     }
+
     @When("^I enter name in feedback: \"([^\"]*)\"$")
-    public void iEnterNameInFeedback(String name) throws Throwable{
+    public void iEnterNameInFeedback(String name) throws Throwable {
         driver.findElement(By.id("fb_name")).clear();
         driver.findElement(By.id("fb_name")).sendKeys(name);
     }
+
     @When("^I click send feedback$")
-    public  void iClickSendFeedback() throws Throwable {
+    public void iClickSendFeedback() throws Throwable {
         driver.findElement(By.className("w3-btn-block")).click();
     }
+
     @Then("^I can see name \"([^\"]*)\" in feedback check$")
-    public  void iCanSeeNameInFeedbackCheck(String name) throws Throwable {
+    public void iCanSeeNameInFeedbackCheck(String name) throws Throwable {
         assertEquals(name, driver.findElement(By.id("name")).getText());
     }
+
     @Then("^I can see age \"([^\"]*)\" in feedback check$")
     public void iCanSeeAgeInFeedbackCheck(String age) throws Throwable {
         assertEquals(age, driver.findElement(By.id("age")).getText());
@@ -172,7 +178,7 @@ public class SampleSteps {
     }
 
     @And("I click submit number")
-    public void iClickSubmitNumber() throws Throwable{
+    public void iClickSubmitNumber() throws Throwable {
         driver.findElement(By.xpath("/html/body/div[2]/div/div/div[2]/button")).click();
     }
 
@@ -190,4 +196,33 @@ public class SampleSteps {
     }
 
 
+    @When("^I select Feedback languages:")
+    public void iSelectFeedbackLanguages(List<String> values) throws Throwable {
+        for (String value : values) {
+            driver.findElement(By.cssSelector("[value='" + value + "']")).click();
+        }
+    }
+
+    @Then("^I can see languages \"([^\"]*)\" in feedback check$")
+    public void iCanSeeLanguagesInFeedbackCheck(String lang) throws Throwable {
+        // Write code here that turns the phrase above into concrete actions
+        assertEquals(lang, driver.findElement(By.id("language")).getText());
+
+    }
+
+    @When("^I enter values to the Feedback form:")
+    public void iEnterValuesToTheFeedbackForm(DataTable inputTable) throws Throwable {
+        for (Map<String, String> feedbackInput : inputTable.asMaps(String.class, String.class)) {
+        if (feedbackInput.containsKey("name")) {
+            driver.findElement(By.id("fb_name")).sendKeys(feedbackInput.get("name"));
+        }
+            driver.findElement(By.id("fb_age")).sendKeys(feedbackInput.get("age"));
+            driver.findElement(By.cssSelector("[value='" + feedbackInput.get("genre") + "']")).click();
+        }
+    }
+
+    @Then("^I can see genre \"([^\"]*)\" in feedback check$")
+    public void iCanSeeGenreInFeedbackCheck(String genre) throws Throwable {
+        assertEquals(genre,driver.findElement(By.id("gender")).getText());
+    }
 }
